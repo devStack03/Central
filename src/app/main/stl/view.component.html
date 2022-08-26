@@ -1,0 +1,291 @@
+<div id="stl-view" class="page-layout blank" fusePerfectScrollbar>
+
+    <ng-template #giveTipDialog class="dialog-content-wrapper">
+        <h2 style="margin-top: 0px;">Give Tip</h2>
+
+        <mat-dialog-content class="cropper-content"  class="cropper-content">
+            <form>
+                <div fxLayout="row" fxLayoutAlign="start start">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Tip Amount</mat-label>
+                        <mat-icon matSuffix class="secondary-text">attach_money</mat-icon>
+                        <input name="giveTipAmountInput" type="number" #giveTipAmountInput matInput>
+                    </mat-form-field>
+                </div>
+            </form>
+        </mat-dialog-content>
+        
+        <mat-dialog-actions fxLayout="row" fxLayoutAlign="center center" style="margin-top: -10px;">
+            <button mat-button (click)="onGiveTipClick()" color="accent" [disabled]="giveTipAmountInput.value <= 0">Give</button>
+            <button mat-button (click)="giveTipDialogRef.close()" color="primary">Cancel</button>
+        </mat-dialog-actions>
+        
+        <!--<button mat-button (click)="onImageCropClose">OK</button> -->
+    </ng-template>
+
+    <ng-template #socialShareDialog class="dialog-content-wrapper">
+        <h2 style="margin-top: 0px;"><mat-icon class="secondary-text s-20 mr-8">share</mat-icon> Sharing...</h2>
+
+        <mat-dialog-content class="cropper-content"  class="cropper-content">
+            <div class="share-items">
+                <button mat-button [socialShare]="'fb'" class="share-item" fxLayout="row" fxLayoutAlign="start center">
+                    <img class="social-img" src="assets/images/socials/facebook.svg" />
+                    <span>Facebook </span>
+                </button>
+
+                <button mat-button [socialShare]="'tw'" class="share-item" fxLayout="row" fxLayoutAlign="start center">
+                    <img class="social-img" src="assets/images/socials/twitter.svg" />
+                    <span>Twitter </span>
+                </button>
+
+                <button mat-button [socialShare]="'in'" class="share-item" fxLayout="row" fxLayoutAlign="start center">
+                    <img class="social-img" src="assets/images/socials/linkedin.svg" />
+                    <span>Linkdedin </span>
+                </button>
+<!--
+                <div [socialShare]="'tr'">Tumblr</div>
+                <div [socialShare]="'rd'">Reddit</div>
+                <div [socialShare]="'pn'">Pinterest</div>
+-->
+            </div>
+        </mat-dialog-content>
+        <!--
+        <mat-dialog-actions fxLayout="row" fxLayoutAlign="center center" style="margin-top: -10px;">
+            <button mat-button (click)="onGiveTipClick()" color="accent" [disabled]="giveTipAmountInput.value <= 0">Give</button>
+            <button mat-button (click)="giveTipDialogRef.close()" color="primary">Cancel</button>
+        </mat-dialog-actions>
+        -->
+        <!--<button mat-button (click)="onImageCropClose">OK</button> -->
+    </ng-template>
+
+    
+    <div fxLayout="row" fxLayoutAlign="center">
+        <div *ngIf="post != null" class="view-container" fxLayout="column" fxLayoutAlign="center">
+
+            <ng-template #fullScreenDialog class="dialog-content-wrapper1 transparent">
+
+                <mat-dialog-content >
+                    <div class="full-carousel" >
+                        <ngx-slick-carousel class="carousel" 
+                                    #slickFull
+                                    [config]="slideConfig_full" 
+                                    (init)="fullSlickInit($event)">
+                            <div ngxSlickItem *ngFor="let thumb of fullImages" class="slide" >
+                                <img [src]="thumb" alt="" width="100%">
+                            </div>
+                        </ngx-slick-carousel>
+    
+                        <div class="arrows">
+                            <img class="slide-arrow left" src="assets/images/arrow_left.png" (click)="onFullSlideLeftClicked()"/>
+                            <img class="slide-arrow right" src="assets/images/arrow_right.png" (click)="onFullSlideRightClicked()"/>
+                        </div>
+                    </div>
+                </mat-dialog-content>
+            </ng-template>
+        
+            <button mat-button class="back" fxLayout="row" fxLayoutAlign="start center" (click)="onBack()">
+                <mat-icon>arrow_back_ios</mat-icon>
+                <span class="span-text">back</span>
+            </button>
+            <div class="view-header" fxLayout="row" fxLayoutAlign="space-between center">
+                <div class="name-header" fxLayout="column" fxLayoutAlign="center start">
+                    <div class="name">
+                        {{post.title}}
+                    </div>
+                    <div class="username">
+                        by {{post.owner.firstName}} {{post.owner.lastName}}
+                    </div>
+                </div>
+
+
+                <div class="avatar-container" fxLayout="column">
+                    <div class="avatar-img" fxLayout="row" fxLayoutAlign="center center">
+                        <img class="avatar" src="{{post.owner.avatar}}" (click)="onAvatarClick()"/>
+                    </div>
+                    <div *ngIf="!isMyPost" class="avatar-actions" fxLayout="row" fxLayoutAlign="center center">
+                        <div class="actions" fxLayout="row" fxLayoutAlign="space-between center">
+                            <button mat-button fxLayout="row" fxLayoutAlign="start center" (click)="onSendTip()">
+                                <mat-icon>attach_money</mat-icon>
+                                <sub>+</sub>
+                            </button>
+                            <button mat-button fxLayout="row" fxLayoutAlign="start center" (click)="onGiveKudo()">
+                                <mat-icon>star</mat-icon>
+                                <sub>+</sub>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view-content" fxLayout="row" fxLayoutAlign="space-between start">
+        
+                <div class="image-container" fxLayout="column" fxLayoutAlign="start center">
+                    <mat-tab-group (selectedTabChange)="selectTabChanged($event)"> 
+                        <mat-tab label="Photos">
+
+                            <div class="main-image">
+                                <ngx-slick-carousel class="carousel" 
+                                            #slickModal
+                                            [config]="slideConfig" 
+                                            (init)="slickInit($event)"
+                                            (breakpoint)="breakpoint($event)"
+                                            (afterChange)="afterChange($event)"
+                                            (beforeChange)="beforeChange($event)">
+                                    <div ngxSlickItem *ngFor="let thumb of post.photos" class="slide">
+                                        <img [src]="thumb" alt="" width="100%" (click)="onFullClicked()">
+                                    </div>
+                                </ngx-slick-carousel>
+
+                                <div class="slide-arrow-container-left" (click)="onSlideLeftClicked()" fxLayout="row" fxLayoutAlign="start center">
+                                    <img class="slide-arrow" src="assets/images/arrow_left.png"/>
+                                </div>
+                                <div class="slide-arrow-container-right" (click)="onSlideRightClicked()" fxLayout="row" fxLayoutAlign="end center">
+                                    <img class="slide-arrow" src="assets/images/arrow_right.png"/>
+                                </div>
+                            </div>   
+
+                        </mat-tab>
+                        <mat-tab label="3D View">
+                            <div class="main-image">
+                                <!--<stl-model-viewer class="main-image" [stlModels]="[post.assetFile]" #stlViewer>-->
+                                <stl-model-viewer class="main-image" #stlViewer [stlModels]="[post.assetFile]">
+                                </stl-model-viewer>
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>
+                    <div class="thumb-images">
+                        <ngx-slick-carousel class="carousel" 
+                                    #slickModal_thumb
+                                    [config]="slideConfig_thumb"
+                                    (afterChange)="afterChange_thumb($event)"
+                                    (beforeChange)="beforeChange_thumb($event)">
+                            <div ngxSlickItem *ngFor="let thumb of post.photos; let i=index" class="slide thumb-item">
+                                <img [src]="thumb" alt="">
+                            </div>
+                        </ngx-slick-carousel>
+                    </div>
+                </div>
+            
+                <div class="content-actions" fxLayout="column" fxLayoutAlign="start start">
+
+                    <button  *ngIf="isMyPost"  mat-button class="action-item action-special-item" fxLayout="row" fxLayoutAlign="start center" (click)="onEditSTL()">
+                        <mat-icon class="secondary-text s-20">edit</mat-icon>
+                        <span class="span-text">Edit STL</span>
+                    </button>
+                    
+                    <div mat-button class="action-item no-cursor" fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon class="secondary-text s-20">access_time</mat-icon>
+                        <span class="span-text">{{formatPeriod(post.createdAt)}}</span>
+                    </div>
+
+                    <div mat-button class="action-item no-cursor" fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon class="secondary-text s-20">remove_red_eye</mat-icon>
+                        <span class="span-text">{{getFormattedNumberOnly(post.viewCount)}}</span>
+                    </div>
+
+                    <div mat-button class="action-item no-cursor" fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon class="secondary-text s-20">bookmark</mat-icon>
+                        <span class="span-text">{{getFormattedNumberOnly(post.bookmarkCount)}}</span>
+                    </div>
+
+                    <div mat-button class="action-item no-cursor" fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon class="secondary-text s-20">thumb_up</mat-icon>
+                        <span class="span-text">{{getFormattedNumberOnly(post.likeCount)}}</span>
+                    </div>
+
+                    <div mat-button class="action-item no-cursor" fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon class="secondary-text s-20">cloud_download</mat-icon>
+                        <span class="span-text">{{getFormattedNumberOnly(post.downloadCount)}}</span>
+                    </div>
+
+                    <span class="separate-bar"></span>
+
+                    <button mat-button class="action-item action-special-item" fxLayout="row" fxLayoutAlign="start center" (click)="onShareClicked()">
+                        <mat-icon class="secondary-text s-20">share</mat-icon>
+                        <span class="span-text">share</span>
+                    </button>
+
+                    <button *ngIf="!isMyPost && !post?.bookmark" mat-button class="action-item action-special-item" fxLayout="row" fxLayoutAlign="start center" (click)="onBookmarkClicked()">
+                        <mat-icon class="secondary-text s-20">bookmark</mat-icon>
+                        <span class="span-text">bookmark</span>
+                    </button>
+
+                    <div *ngIf="!isMyPost && post?.bookmark" class="action-item coin-item" fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon class="secondary-text s-20">bookmark</mat-icon>
+                        <span class="span-text">bookmarked</span>
+                    </div>
+
+                    <button *ngIf="!isMyPost && !post?.myLiked" mat-button class="action-item action-special-item" fxLayout="row" fxLayoutAlign="start center" (click)="onLikeClicked()">
+                        <mat-icon class="secondary-text s-20">thumb_up</mat-icon>
+                        <span class="span-text">like</span>
+                    </button>
+
+                    <div *ngIf="!isMyPost && post?.myLiked" class="action-item coin-item" fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon class="secondary-text s-20">thumb_up</mat-icon>
+                        <span class="span-text">liked</span>
+                    </div>
+
+                    <div class="action-item coin-item" fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon class="secondary-text s-20">attach_money</mat-icon>
+                        <span class="span-text">{{post.coins}}</span>
+                    </div>
+
+                    <button mat-button class="action-item action-special-item" fxLayout="row" fxLayoutAlign="start center" (click)="onDownloadClicked()">
+                        <mat-icon class="secondary-text s-20">cloud_download</mat-icon>
+                        <span class="span-text">download</span>
+                    </button>
+                    
+
+                </div>
+            </div>
+
+            <div class="view-tags" fxLayout="row wrap" fxLayoutAlign="start center">
+                <div *ngFor="let tag of post.tags" class="view-tag" fxLayout="row" fxLayoutAlign="center center">
+                    <span>{{tag}}</span>
+                </div>
+            </div>
+
+            <div class="view-description">
+                {{post.description}}
+            </div>
+
+            <div class="comments-container" fxLayout="column" fxLayoutAlign="start start">
+                <div class="comments-hero">
+                    comments({{post.commentCount}})
+                </div>
+                <div *ngIf="post.comments.length < post.commentCount">
+                    <button mat-button class="load-comment-btn" (click)="loadMoreComments()">Load More...</button>
+                </div>
+                <div class="comments" fxLayout="column" fxLayoutAlign="start center">
+                    <div *ngFor="let comment of post.comments" class="comment" fxLayout="row" fxLayoutAlign="start center">
+                        <div class="comment-avatar">
+                            <img class="avatar" [src]="comment.commenter? comment.commenter.avatar: 'assets/images/avatars/profile.jpg'" />
+                        </div>
+                        <div class="comment-content" fxLayout="column" fxLayoutAlign="start start">
+                            <div class="comment-header" fxLayout="row" fxLayoutAlign="start start">
+                                <span class="comment-user">{{comment.commenter?.firstName + ' ' + comment.commenter?.lastName}}</span>
+                                <span class="comment-time">{{formatPeriod(comment.createdAt)}}</span>
+                            </div>
+                          <div class="comment-desc">
+                                {{comment.text | sliceLine}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reply" fxLayout="row" fxFlexFill>
+                        <img *ngIf="!isLoggedIn" src="assets/images/avatars/profile.jpg" class="avatar"/>
+                        <img *ngIf="isLoggedIn" [src]="user.avatar" class="avatar"/>
+
+                        <form fxFlex>
+                            <textarea placeholder="Add a comment..." #commentTxtAreaInput></textarea>
+                            <button mat-raised-button color="accent" class="post-comment-button" aria-label="Post Comment" (click)="onPostCommentClicked()">
+                                Post Comment
+                            </button>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,173 @@
+<!--<div id="home" class="page-layout blank" 
+    fusePerfectScrollbar  
+    [fusePerfectScrollbarOptions]="{suppressScrollX: true, updateOnRouteChange : true}">-->
+<div id="home" class="page-layout blank"
+          infiniteScroll
+          [infiniteScrollDistance]="1"
+          [infiniteScrollThrottle]="50"
+          [infiniteScrollContainer]="'#container-3'"
+          [fromRoot]="true"
+          (scrolled)="onScroll()"
+>
+  
+<ng-template #filterDialog>
+    <!--<h2 matDialogTitle>Image Cropping...</h2>-->
+    <mat-dialog-content class='filter-dialog-content'>
+        <div class="" fxLayout="column" fxLayoutAlign="center">
+            <div class="" fxLayout="row" fxLayoutAlign="start center">
+                <span class="filter-label">Uploaded</span>
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="filterSearchObj.uploaded">
+                        <mat-option *ngFor="let filter of filterUploaded" [value]="filter.value">
+                            {{ filter.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="" fxLayout="row" fxLayoutAlign="start center">
+                <span class="filter-label">Price</span>
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="filterSearchObj.price">
+                        <mat-option *ngFor="let filter of filterPrice" [value]="filter.value">
+                            {{ filter.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="" fxLayout="row" fxLayoutAlign="start center">
+                <span class="filter-label">Downloads</span>
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="filterSearchObj.downloads">
+                        <mat-option *ngFor="let filter of filterDownloads" [value]="filter.value">
+                            {{ filter.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="" fxLayout="row" fxLayoutAlign="start center">
+                <span class="filter-label">Likes</span>
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="filterSearchObj.likes">
+                        <mat-option *ngFor="let filter of filterLikes" [value]="filter.value">
+                            {{ filter.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="" fxLayout="row" fxLayoutAlign="start center">
+                <span class="filter-label">Pub Count</span>
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="filterSearchObj.pubcount">
+                        <mat-option *ngFor="let filter of filterPubCount" [value]="filter.value">
+                            {{ filter.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="" fxLayout="row" fxLayoutAlign="start center">
+                <span class="filter-label">Pub Count</span>
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="filterSearchObj.pubkudos">
+                        <mat-option *ngFor="let filter of filterPubKudos" [value]="filter.value">
+                            {{ filter.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            
+        </div>
+    </mat-dialog-content>
+    
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="center center">
+        <button mat-button matDialogClose="OK" color="primary">OK</button>
+        <button mat-button matDialogClose="Cancel" color="primary">Cancel</button>
+    </mat-dialog-actions>
+    
+    <!--<button mat-button (click)="onImageCropClose">OK</button> -->
+</ng-template>
+
+    <!-- HEADER -->
+    <div *ngIf="!isSearching" class="header" 
+        fxLayout="column" fxLayoutAlign="center center">
+
+        <!-- Hero Text -->
+        <div class="hero-text">
+            <h2 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+                Find and Share STL Files with Ease
+            </h2>
+        </div>
+        <!-- / Hero Text -->
+        
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content">
+
+        <div  fxLayout="column" fxLayoutAlign="center">
+
+            <div class="filters" fxLayout="row" fxLayoutAlign="space-between start">
+
+                <div fxLayout="row" fxLayoutAlign="start start">
+                    <mat-form-field appearance="outline" floatLabel="always" [ngClass]="{'course-search': true, 'searching-search-stl': isSearching}">
+                        <mat-label>Search STLs...</mat-label>
+                        <!-- <input matInput placeholder="Enter a keyword..." [(ngModel)]="searchTerm" (input)="filterCoursesByTerm()"> -->
+                        <input matInput placeholder="Enter a keyword..."  [formControl]="searchInput" [(ngModel)]="searchTerm">
+                    </mat-form-field>
+                    <img *ngIf="loading" src="assets/images/loading/loading-spinner-blue.gif" class="loading mt-16" />
+                </div>
+
+                <!-- UPLOADD BUTTON -->
+                <div class="upload-wrapper" fxLayout="row" fxLayoutAlign="center center" (click)="onUploadClicked()">
+                    <!--<span class="p-16">or</span> -->
+                    <a mat-button class="my-theme-color" fxFlex="0 0 auto" fxLayout="row"
+                    fxLayoutAlign="start center">
+                        <mat-icon class="s-16 mr-sm-4">add</mat-icon>
+                        <span>Upload STL...</span>
+                    </a>
+                </div>
+                <!-- / ADD BUTTON -->
+
+            </div>
+
+            <div class="filters" fxLayout="row" fxLayoutAlign="space-between start">
+                <mat-form-field appearance="outline" [ngClass]="{'course-search':true}">
+                    <mat-label>Sort by</mat-label>
+                    <mat-select *ngIf="isSearching" [(ngModel)]="currentSearchSort"
+                                (selectionChange)="changedSearchSortby()">
+                        <mat-option *ngFor="let sortby of searchSortbys" [value]="sortby.value">
+                            {{ sortby.label }}
+                        </mat-option>
+                    </mat-select>
+                    
+                    <mat-select  *ngIf="!isSearching" [(ngModel)]="currentSort"
+                                (selectionChange)="changedSortby()">
+                        <mat-option *ngFor="let sortby of sortbys" [value]="sortby.value">
+                            {{ sortby.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <div *ngIf="isSearching" class="upload-wrapper" fxLayout="row" fxLayoutAlign="center center">
+                    <!--<span class="p-16">or</span> -->
+                    <a mat-button class="my-theme-color" fxFlex="0 0 auto" fxLayout="row"
+                        fxLayoutAlign="start center"
+                        (click)="onFilterClicked()"
+                    >
+                        <mat-icon class="s-16 mr-sm-4">search</mat-icon>
+                        <span>Filter</span>
+                    </a>
+
+                </div>
+           </div>
+
+            <app-stllist [posts]="posts" [loading]="loading" [returnParams]="searchParams"></app-stllist>
+
+        </div>
+    </div>
+
+</div>

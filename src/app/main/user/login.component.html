@@ -1,0 +1,130 @@
+<div class="dialog-content-wrapper">
+
+    <div  fxLayout="row" fxLayoutAlign="center">
+
+        <h2>STLcentral</h2>
+
+    </div>
+
+    <div mat-dialog-content class="py-0 px-0 m-0" id="login_container" >
+        <block-ui>
+            <mat-tab-group fxLayout="column" fxFlex>
+
+                <mat-tab label="Login">
+                    <div fxLayout="column" fxLayoutAlign="center" [@animateStagger]="{value:'500'}">
+                        <!--
+                        <div *ngIf="errorOccurred" class="message-box error mb-16" fxLayout="row" fxLayoutAlign="start center"  [@animate]="{value:'*',params:{y:'100%'}}">
+                            <mat-icon>error</mat-icon>
+                            <span>{{error}}</span>
+                        </div>
+                        -->
+
+                        <button mat-raised-button class="google" (click)="onClickLoginWithGoogle()">
+                            Sign in with Google
+                        </button>
+            
+                        <button mat-raised-button class="facebook" (click)="onClickLoginWithFB()">
+                            Sign in with Facebook
+                        </button>
+                        <span class="info-label">OR</span>
+                        <form name="loginForm" [formGroup]="loginForm" novalidate fxLayout="column" fxLayoutAlign="center"  (ngSubmit)="onLoginSubmit()">
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Enter Email</mat-label>
+                                <input matInput formControlName="email" maxlength="128">
+                                <mat-error
+                                    *ngIf="!loginForm.get('email').hasError('required') &&
+                                    loginForm.get('email').hasError('email')">
+                                    Please enter a valid email address
+                                </mat-error>
+                            </mat-form-field>
+            
+                            <mat-form-field appearance="outline">
+                                <mat-label>Enter Password</mat-label>
+                                <input matInput type="password" formControlName="password" maxlength="20">
+                                <mat-error>
+                                    Password is required
+                                </mat-error>
+                            </mat-form-field>
+            
+                            <div class="remember" fxLayout="row" fxLayout.xs="column"
+                                fxLayoutAlign="space-between center">
+                                <mat-checkbox class="remember-me" aria-label="Remember Me" formControlName="rememberCheckbox">
+                                    Remember Me ?
+                                </mat-checkbox>
+                            </div>
+            
+                            <button mat-raised-button color="accent" class="submit-button" aria-label="LOG IN"
+                                    [disabled]="loginForm.invalid">
+                                LOGIN
+                            </button>
+            
+                        </form>
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Sign Up">
+                    <div fxLayout="column" fxLayoutAlign="center">
+                        <button mat-raised-button class="google" (click)="onClickLoginWithGoogle()">
+                            Sign in with Google
+                        </button>
+            
+                        <button mat-raised-button class="facebook" (click)="onClickLoginWithFB()">
+                            Sign in with Facebook
+                        </button>
+                        <span class="info-label">OR</span>
+                        <form name="registerForm" [formGroup]="registerForm" novalidate fxLayout="column" fxLayoutAlign="center"  (ngSubmit)="onRegisterSubmit()">
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Valid email address - we DON'T spam </mat-label>
+                                <input matInput formControlName="email" maxlength="128">
+                                <mat-error
+                                    *ngIf="registerForm.get('email').hasError('required')">
+                                    Email is required
+                                </mat-error>
+                                <mat-error
+                                    *ngIf="!registerForm.get('email').hasError('required') &&
+                                    registerForm.get('email').hasError('email')">
+                                    Please enter a valid email address
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Enter Password</mat-label>
+                                <input matInput type="password" formControlName="password" maxlength="20">
+                                <mat-error>
+                                    Password is required
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Password Confirm </mat-label>
+                                <input matInput type="password" formControlName="passwordConfirm" maxlength="20">
+                                <mat-error *ngIf="registerForm.get('passwordConfirm').hasError('required')">
+                                    Password Confirm is required
+                                </mat-error>
+                                <mat-error *ngIf="registerForm.get('passwordConfirm').hasError('passwordsNotMatch')">
+                                    Passwords must match
+                                </mat-error>
+                            </mat-form-field>
+            
+                            <div class="remember" fxLayout="row" fxLayout.xs="column"
+                                fxLayoutAlign="space-between center">
+                                <span>
+                                    By joining this site, you agree to the terms and conditions of use.
+                                </span>
+                            </div>
+            
+                            <button mat-raised-button color="accent" class="submit-button" aria-label="Sign Up"
+                                    [disabled]="registerForm.invalid">
+                                Sign Up
+                            </button>
+            
+                        </form>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </block-ui>
+    </div>
+
+</div>

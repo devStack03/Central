@@ -1,0 +1,75 @@
+<div id="bookmarks" class="page-layout blank" fusePerfectScrollbar>
+
+    <ng-template #removeBookmarkDialog class="dialog-content-wrapper">
+        <button mat-button mat-buttonfxLayout="row" fxLayoutAlign="start center" (click)="onRemoveClicked()">
+            <mat-icon class="secondary-text s-20">remove</mat-icon>
+            <span>Remove </span>
+        </button>
+    </ng-template>
+
+    <!-- HEADER -->
+    <div class="header" fxLayout="column" fxLayoutAlign="center center">
+        <!-- Hero Text -->
+        <div class="hero-text">
+            <h2 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+                Your Bookmarks
+            </h2>
+        </div>
+        <!-- / Hero Text -->
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content">
+
+        <div class="filters" fxLayout="row" fxLayoutAlign="space-between center"
+                fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="space-between center">
+
+                <mat-form-field appearance="outline" class="sortby-selector">
+                    <mat-label>Sort by</mat-label>
+                    <mat-select [(ngModel)]="currentSort"
+                                (selectionChange)="changedSortby()">
+                        <mat-option *ngFor="let sortby of sortbys" [value]="sortby.value">
+                            {{ sortby.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+        </div>
+
+        <div class="kudos" fxLayout="column" fxLayoutAlign="center" [@animateStagger]="{value:'50'}">
+            
+            <!--<button mat-button  class="kudo" *ngFor="let bookmark of bookmarks" [@animate]="{value:'*',params:{y:'100%'}}" 
+                (click)="onBookmarkClicked(bookmark)" long-press (onLongPress)="onBookmarkLongPressed(bookmark)"> -->
+            <button mat-button  class="kudo" *ngFor="let bookmark of bookmarks" [@animate]="{value:'*',params:{y:'100%'}}" 
+                (click)="onBookmarkClicked(bookmark)" [long-press] (onRelease)="onBookmarkLongPressed(bookmark)">
+
+                <div fxLayout="row" fxLayoutAlign="start center">
+
+                    <div class="avatar-wrapper" fxFlex="0 1 auto" fxLayoutAlign="center center">
+                        <img src="{{bookmark.post.photos[0]}}" class="avatar" />
+                    </div>
+
+                    <div fxLayout="row" fxFlex>
+
+                        <div class="pr-4" fxFlex fxLayout="column" fxLayoutAlign="center start">
+                            <div class="username">{{bookmark.post.title}}</div>
+                            <div class="where">{{bookmark.post.description}}</div>
+                        </div>
+
+                        <div fxLayout="column" fxLayoutAlign="start end">
+                            <div class="time">
+                                {{formatFromNow(bookmark.post.createdAt)}}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </button>
+
+            <div class="no-courses" *ngIf="bookmarks.length === 0">
+                No Bookmarks Found!
+            </div>
+        
+        </div>
+    </div>
+
+</div>

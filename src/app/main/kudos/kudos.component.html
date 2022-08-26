@@ -1,0 +1,72 @@
+<div id="kudos" class="page-layout blank" fusePerfectScrollbar>
+
+    <!-- HEADER -->
+    <div class="header" fxLayout="column" fxLayoutAlign="center center">
+        <!-- Hero Text -->
+        <div class="hero-text">
+            <h2 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+                Your Kudos
+            </h2>
+        </div>
+        <!-- / Hero Text -->
+
+        <div class="hero-text">
+            <h3 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+                Your Kudos score is <b>{{kudos.length}}</b>
+            </h3>
+        </div>
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content">
+
+        <div class="filters" fxLayout="row" fxLayoutAlign="space-between center"
+                fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="space-between center">
+
+                <mat-form-field appearance="outline" class="sortby-selector">
+                    <mat-label>Sort by</mat-label>
+                    <mat-select [(ngModel)]="currentSort"
+                                (selectionChange)="changedSortby()">
+                        <mat-option *ngFor="let sortby of sortbys" [value]="sortby.value">
+                            {{ sortby.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+        </div>
+
+        <div class="kudos" fxLayout="column" fxLayoutAlign="center" [@animateStagger]="{value:'50'}">
+            
+            <button mat-button  class="kudo" *ngFor="let kudo of kudos" [@animate]="{value:'*',params:{y:'100%'}}" (click)="onKudoClicked(kudo)"> 
+
+                <div fxLayout="row" fxLayoutAlign="start center">
+
+                    <div class="avatar-wrapper" fxFlex="0 1 auto" fxLayoutAlign="center center" (click)="onAvatarClicked(kudo)">
+                        <img src="{{kudo.sender.avatar}}" class="avatar" />
+                    </div>
+
+                    <div fxLayout="row" fxFlex>
+
+                        <div class="pr-4" fxFlex fxLayout="column" fxLayoutAlign="center start">
+                            <div class="username">{{kudo.sender.firstName + ' ' + kudo.sender.lastName}}</div>
+                            <div class="where">Gave you kudo!</div>
+                            <div class="where">{{findPosition(kudo)}}</div>
+                        </div>
+
+                        <div fxLayout="column" fxLayoutAlign="start end">
+                            <div class="time">
+                                {{formatFromNow(kudo.createdAt)}}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </button>
+
+            <div class="no-courses" *ngIf="kudos.length === 0">
+                No Kudos Found!
+            </div>
+        
+        </div>
+    </div>
+
+</div>

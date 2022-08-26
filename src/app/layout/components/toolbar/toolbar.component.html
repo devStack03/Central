@@ -1,0 +1,163 @@
+<mat-toolbar class="p-0 mat-elevation-z1">
+
+    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
+
+        <div fxLayout="row" fxLayoutAlign="start center" style="flex:1">
+
+            <button mat-icon-button class="navbar-toggle-button" [routerLink]="'/'">
+                <mat-icon class="theme-text">menu</mat-icon>
+            </button>
+
+
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="center" style="flex:1">
+            <span class="title-asset">STL</span><span class="title-fixed">Central</span>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="end center" style="flex:1" id="test" >
+            <button mat-icon-button *ngIf="userLoggedIn"
+                    class="quick-panel-toggle-button"
+                    (click)="toggleNotifications()"
+                    (menuOpened)="onMenuOpen($event)"
+                    [matMenuTriggerFor]="notificationMenu">
+                <!--<mat-icon class="theme-text">notifications</mat-icon>-->
+                <i class="fa fa-bell-o"></i>
+            </button>
+            <mat-menu 
+                [class]="'notification-menu' + (notifications.length>0 ? '' : '-empty')" #notificationMenu="matMenu" [overlapTrigger]="false">
+                <div *ngIf="notifications.length == 0">
+                    <h3 style="padding: 20px;">
+                        No notifications.   
+                    </h3>
+                </div>
+
+
+                <div 
+                    class="notification-content"
+                    #matMenuContent
+                    infiniteScroll
+                    [infiniteScrollDistance]="1"
+                    [infiniteScrollThrottle]="50"
+                    [scrollWindow]="false"
+                    (scrolled)="onScroll(null)"
+                >
+                    <div  mat-menu-item *ngIf="notifications.length > 0" (click)="clearNotifications()">
+                        <span>
+                            Clear Notifications.   
+                        </span>
+                    </div>
+
+                    <div *ngFor="let notification of notifications" class="notification-item">
+                        
+                        <div fxLayout="row" fxLayoutAlign="start center" >
+                            <div class="avatar-wrapper" fxLayout="column" fxFlex="0 1 auto" fxLayoutAlign="start start" (click)="gotoProfile(notification.sender._id)">
+                                <img src="{{notification.sender.avatar}}" class="avatar" />
+                                <mat-icon class="s-16 type-button">{{getNoticationIcon(notification)}}</mat-icon>
+                            </div>
+        
+                            <div fxLayout="row" fxFlex (click)="onClickNotification(notification)">
+        
+                                <div class="pr-4" fxFlex fxLayout="column" fxLayoutAlign="center start">
+                                    <div class="username"><b>{{notification.sender.firstName + ' ' + notification.sender.lastName}}</b></div>
+                                    <div class="where">{{notification.msg}}</div>
+                                </div>
+        
+                                <div class="pl-4" fxLayout="column" fxLayoutAlign="start end">
+                                    <div class="time">
+                                        {{formatFromNow(notification.createdAt)}}
+                                    </div>
+                                </div>
+        
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div  mat-menu-item *ngIf="false" (click)="onScroll($event)" style="text-align: center;">
+                        
+                            Load More Notifications.   
+                        
+                    </div>
+                </div>
+            </mat-menu>
+
+
+            <button *ngIf="!userLoggedIn" mat-icon-button
+                    class="quick-panel-toggle-button"
+                    (click)="toggleUser()"
+                    aria-label="Toggle quick panel">
+                <!--<mat-icon class="theme-text">person</mat-icon>-->
+                <i class="fa fa-user"></i>
+            </button>
+
+           
+            <button *ngIf="userLoggedIn" mat-button [matMenuTriggerFor]="userMenu"
+                    class="user-button" (click)="onUserClicked()">
+                <div fxLayout="row" fxLayoutAlign="center center">
+                    <!--<div class="avatar mr-0 mr-sm-16" #avatar src="{{user.user.avatar === '' ? 'assets/images/avatars/profile.jpg' : user.user.avatar}}">
+                    </div>-->
+                    <img class="avatar mr-0 mr-sm-16" src="{{(userLoggedIn && user && user.user.avatar) != '' ? user.user.avatar : 'assets/images/avatars/profile.jpg'}}">
+                    
+                    <!--<span class="username mr-12" fxHide fxShow.gt-sm>Charlie Adams</span>-->
+                    <mat-icon class="s-16" fxHide.xs>keyboard_arrow_down</mat-icon>
+                </div>
+            </button>
+
+            <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item class="" [routerLink]="'/transactions'">
+                    <mat-icon>attach_money</mat-icon>
+                    <span>Transactions</span>
+                    <span class="p-16">{{balance}}</span>
+                </button>
+
+                <button mat-menu-item class="" [routerLink]="'/kudos'">
+                    <mat-icon>star</mat-icon>
+                    <span>Kudos Activity</span>
+                    <span class="p-16">{{kudo}}</span>
+                </button>
+
+                <button mat-menu-item class="" [routerLink]="'/upload_stl'">
+                    <mat-icon>add</mat-icon>
+                    <span>Upload STL</span>
+                </button>
+
+                <!--
+                <button mat-menu-item class="" [routerLink]="'/view_stl'">
+                    <mat-icon>edit</mat-icon>
+                    <span>Manage STLs</span>
+                </button>
+                -->
+                
+                <button mat-menu-item class="" [routerLink]="'/bookmark'">
+                    <mat-icon>bookmarks</mat-icon>
+                    <span>View Bookmarks</span>
+                </button>
+                
+                <button mat-menu-item (click)="onProfileView()">
+                    <mat-icon>account_circle</mat-icon>
+                    <span>My Profile</span>
+                </button>
+
+                <button mat-menu-item [routerLink]="'/setting'">
+                    <mat-icon>settings</mat-icon>
+                    <span>Settings</span>
+                </button>
+
+                <button mat-menu-item [routerLink]="'/leaderboard'">
+                    <mat-icon>bar_chart</mat-icon>
+                    <span>Leaderboard</span>
+                </button>
+
+                <button mat-menu-item class="" (click)="logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    <span>Logout</span>
+                </button>
+
+            </mat-menu>
+        </div>
+
+    </div>
+
+</mat-toolbar>

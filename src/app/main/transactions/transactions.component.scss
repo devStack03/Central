@@ -1,0 +1,140 @@
+@import "src/@fuse/scss/fuse";
+
+#transactions {
+    .header {
+        position: relative;
+        flex: 1 0 auto;
+        text-align: center;
+        overflow: hidden;
+
+        @include media-breakpoint('xs') {
+            padding: 16px;
+        }
+
+        .hero-text {
+            color: #777777 !important;
+            //font-style: italic;
+        }
+
+        .sub-text {
+            color: #777777 !important;
+            font-style: italic;
+        }
+    }
+
+    .filters {
+        width: 100%;
+        max-width: 740px;
+        margin: 0 auto;
+        padding: 0 20px;
+
+        .guide {
+            padding: 0 20px;
+            margin-top: 16px;
+
+            .show {
+                font-size: 1.5em;
+                padding-right: 10px;
+                @include media-breakpoint('xs') {
+                    font-size: 1em;
+                    padding-right: 4px;
+                }
+            }
+
+            .all {
+                font-size: 1.5em;
+                font-weight: 700;
+                text-underline-position: below;
+                padding-right: 10px;
+                cursor: pointer;
+                @include media-breakpoint('xs') {
+                    font-size: 1em;
+                    padding-right: 4px;
+                }
+            }
+
+            
+        }
+
+        .go {
+            margin: 8px 0px;
+        }
+
+        .filter-selector {
+            min-width: 300px;
+            margin-right: 10px;
+
+            @include media-breakpoint('xs') {
+                width:150px !important;
+                min-width: 150px !important;
+            }
+        }
+
+        .sortby-selector {
+            min-width: 200px;
+        }
+    }
+
+    .content {
+        .kudos {
+            width: 100%;
+            max-width: 740px;
+            margin: 24px auto;
+            padding: 0 20px;
+           
+
+            @include media-breakpoint('lt-md') {
+                margin: 0 0;
+                padding: 0 0;
+            }
+
+            .no-courses {
+                font-size: 24px;
+                margin: 24px 0;
+                text-align: center;
+            }
+
+            .kudo {
+                white-space: normal;
+                text-align: left;
+                letter-spacing: .010em;
+                min-height: 88px;
+                border-bottom: 1px solid;
+                padding: 16px;
+                font-weight: 400;
+                border-radius: 0;
+                border-color: #aaaaaa;
+
+                @include media-breakpoint('xs') {
+                    margin: 0 0;
+                    padding: 0 20px;
+                }
+
+                .username {
+                    font-size: 18px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+
+                .where {
+                    line-height: normal;
+                    margin-top: 0;
+                }
+
+                .time {
+                    font-size: 12px;
+                    margin-top: 4px;
+                }
+            }
+
+
+            .avatar-wrapper {
+
+                .avatar {
+                    margin-right: 16px;
+                }
+            }
+
+        }
+    }
+}

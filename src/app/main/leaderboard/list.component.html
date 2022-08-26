@@ -1,0 +1,62 @@
+<div id="leaderboard" class="page-layout blank" fusePerfectScrollbar>
+
+    <!-- HEADER -->
+    <div class="header" fxLayout="column" fxLayoutAlign="center center">
+        <!-- Hero Text -->
+        <div class="hero-text">
+            <h2 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+                Leaderboard
+            </h2>
+        </div>
+        <!-- / Hero Text -->
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content">
+
+        <div class="kudos" fxLayout="column" fxLayoutAlign="center">
+         
+            <div *ngFor="let section of sections" class="section" fxLayout="column" fxLayoutAlign="center">
+                <div class="section-header">
+                    {{section.title}}
+                </div>
+
+                <button mat-button   class="kudo" *ngFor="let user of section.data; let rank = index" (click)="onUserClicked(user)">
+                    <div fxLayout="row" fxLayoutAlign="start center">
+
+                        <div class="rank-container" fxLayout="row" fxLayoutAlign="center">
+                            <span class="rank">{{rank + 1}}</span>
+                        </div>
+
+                        <div class="user-content">
+                            <div class="avatar-wrapper" fxFlex="0 1 auto" fxLayoutAlign="center center">
+                                <img src="{{user.avatar}}" class="avatar" />
+                            </div>
+
+                            <div fxLayout="row" fxFlex>
+
+                                <div class="pr-4" fxFlex fxLayout="column" fxLayoutAlign="center start">
+                                    <div class="username">{{user.firstName + ' ' + user.lastName}}</div>
+                                    <div class="where">Lives in {{getMemberCountry(user)}}</div>
+                                    <div class="where">{{getMemberFor(user)}}</div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </button>
+
+                <div class="section-view-more" fxLayout="row" fxLayoutAlign="end">
+                    <button *ngIf = "!section.more" mat-button class="" (click) = "onViewMoreClicked(section.id)">
+                        <span class="section-view-more">View Top 50</span>
+                    </button>
+
+                    <button *ngIf = "section.more" mat-button class="" (click) = "onCollapseClicked(section.id)">
+                        <span class="section-view-more">Collapse</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

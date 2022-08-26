@@ -1,0 +1,245 @@
+<div class="page-layout blank stlupload" fusePerfectScrollbar>
+
+    <div fxLayout="row" class="w-100-p"  fxLayoutAlign="center">
+        <div fxLayout="row " class="w-100-p"  fxLayoutAlign="center" >
+            <block-ui class="w-100-p"  fxLayout="row " fxLayoutAlign="center" >
+                <ng-template #photoCropDialog>
+                    <h2 matDialogTitle>Image Cropping...</h2>
+                    <mat-dialog-content class='cropper-content'>
+        
+                        <image-cropper
+                                [imageChangedEvent]="photoChangedEvent"
+                                [maintainAspectRatio]="true"
+                                [aspectRatio]="4 / 4"
+                                format="png"
+                                (imageCropped)="onPhotoCropped($event)"
+                                (imageLoaded)="onPhotoLoaded()"
+                                (cropperReady)="onPhotoCropperReady()"
+                                (loadImageFailed)="onPhotoLoadFailed()"
+                            >
+                        </image-cropper>
+        
+                    </mat-dialog-content>
+                    
+                    <mat-dialog-actions fxLayout="row" fxLayoutAlign="center center">
+                        <button mat-button matDialogClose="OK" color="primary">OK</button>
+                    </mat-dialog-actions>
+                    
+                    <!--<button mat-button (click)="onImageCropClose">OK</button> -->
+                </ng-template>
+                <fuse-widget class="carded-layer "  fxLayout="column">
+                    <div class="fuse-widget-front mat-elevation-z2 p-16" fxLayout="column" fxLayoutAlign="space-between">
+
+                        <div fxLayout="row" class="hero-text">
+                            <h1 *ngIf="!!this.postId">Edit your STL</h1>
+                            <h1 *ngIf="!this.postId">Upload your STL</h1>
+                        </div>
+
+                        <form name="stlForm" [formGroup]="stlForm" class="stlForm w-100-p" fxLayout="column"  fxFlex="1 0 auto">
+                            <span class="label-text">Name (eg RC Car)</span>
+                            <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                                <input matInput placeholder=""
+                                    name="title"
+                                    formControlName="title"  maxlength="48">
+                            </mat-form-field>
+                            <span class="label-text mt-05em">Tags (think of them as categories – eg kitchen)</span>
+                                
+                            <mat-form-field appearance="outline" floatLabel="always" >
+                                <mat-chip-list #tagList >
+
+                                    <mat-chip *ngFor="let tag of tags"
+                                            [removable]="true" (removed)="removeTag(tag)" [selectable]="true">
+                                        {{tag}}
+                                        <mat-icon matChipRemove>cancel</mat-icon>
+                                    </mat-chip>
+
+                                    <input
+                                        matInput [matChipInputFor]="tagList"
+                                        [matChipInputAddOnBlur]="true"
+                                        (matChipInputTokenEnd)="addTag($event)" 
+                                         [matAutocomplete]  ="auto"
+                                         [formControl]="searchControl"
+                                         />
+
+                                    <mat-autocomplete #auto="matAutocomplete"
+                                    (optionSelected)="onTagSelected($event)"
+                                    >
+                                        <mat-option *ngFor="let tag of autoCompleteTags" [value]="tag">
+                                            {{tag}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+
+                                </mat-chip-list>
+                            </mat-form-field>
+<!--
+                                <div class="container taglist">
+                                    <ngx-mat-tag-input #tagInput
+                                            [items]="autoCompleteTags" [selectedTags]="tags" appearance="outline" (ngModelChange)="onTagsInputChange($event)"
+                                            placeholder="" (focus)="onTagsFocus()" (touched)="onTagsFocus()"></ngx-mat-tag-input>
+                                </div>
+-->
+                            <!-- </mat-form-field> -->
+                            <span class="label-text mt-05em">Up to 5 photos (drag them in order)</span>
+                            <div fxLayout="row" class="mb-05em" fxLayoutAlign="start center">
+                                <div fxLayout="row" #divPhotos class="photos" ngxDroppable (drop)="onDrop($event)">
+                                    <div fxLayout="row" class="has-handle"
+                                        *ngFor="let photo of photos" 
+                                        ngxDraggable ngxDragHandle>
+
+                                        <img class="photo" [src]="photo">
+                                        <mat-icon class="remove" (click)="onRemovePhoto(photo)">cancel</mat-icon>
+
+                                    </div>
+                                    
+
+                                
+                                </div>
+                                <button class="photo" (click)="onAddPhoto()" *ngIf="photos.length < 5">
+                                    <mat-icon s-20>add_a_photo</mat-icon>
+                                </button>
+                                <input type="file" hidden  id="photofile" accept="image/jpeg, .jpeg, image/png, .png, image/pjpeg, .jpg" (change)="onPhotoFileInput($event)">
+                            </div>
+
+                            
+                            <span class="label-text">STL file</span>
+                            <div class="stlform-wrapper mb-05em" fxLayout="row" fxLayoutAlign="start center">
+                                <input hidden id="stlfile" type="file" name="stlfile" (change)="onSTLFileInput($event.target.files[0])" accept=".stl">
+                                <span class="w-100-p">{{stlFile?.name ? stlFile.name : ''}}</span>
+                                <button mat-icon-button  (click)="onAddStl()">
+                                    <mat-icon s-20 >add_photo_alternate</mat-icon>
+                                </button>
+                            </div>
+
+                            <span class="label-text">No. of coins needed for download? (0 = FREE)</span>
+                            <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                                <input matInput placeholder=""
+                                    name="coins"
+                                    type="number"
+                                    formControlName="coins"  maxlength="10">
+                            </mat-form-field>
+
+                            <span class="label-text mt-05em">Description of this product</span>
+
+                            <mat-form-field appearance="outline" floatLabel="always" class="w-100-p" >
+                                <textarea matInput 
+                                        name="description"
+                                        formControlName="description"
+                                        rows="5"  maxlength="512">
+                                </textarea>
+                            </mat-form-field>
+                        </form>
+
+                        <div fxLayout="row" fxLayoutAlign="center center">
+                            <button fuseWidgetToggle mat-raised-button color="accent" [disabled]="!isFormValid()" class="submit-button" (click)="onSaveAndPreview()" >Save and Preview</button>
+                        </div>
+
+                        
+
+                    </div>
+
+                    <div class="fuse-widget-back mat-elevation-z2">
+                        <div fxLayout="row" fxLayoutAlign="center">
+                            <div class="view-container" fxLayout="column" fxLayoutAlign="center">
+                                
+                                <div class="view-header" fxLayout="row" fxLayoutAlign="space-between center">
+                                    <div class="name-header" fxLayout="column" fxLayoutAlign="center start">
+                                        <div class="name">
+                                            {{pf.title.value}}
+                                        </div>
+                                        <div class="username">
+                                            By {{user.firstName}} {{user.lastName}}
+                                        </div>
+                                    </div>
+                    
+                                    <div class="avatar-container" fxLayout="column" fxLayoutAlign="flex-end">
+                                        <div class="avatar-img" fxLayout="row" fxLayoutAlign="center center">
+                                            <img class="avatar" [src]="user.avatar" />
+                                        </div>
+                                        <div class="avatar-actions" fxLayout="row" fxLayoutAlign="center center">
+                                            <div class="actions" fxLayout="row" fxLayoutAlign="space-between center">
+                                                <button mat-button fxLayout="row" fxLayoutAlign="start center">
+                                                    <mat-icon>attach_money</mat-icon>
+                                                    <sub>+</sub>
+                                                </button>
+                                                <button mat-button fxLayout="row" fxLayoutAlign="start center">
+                                                    <mat-icon>start</mat-icon>
+                                                    <sub>+</sub>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="view-content" fxLayout="row" fxLayoutAlign="space-between start">
+                                    <div class="image-container" fxLayout="column" fxLayoutAlign="start center">
+                                        <div class="main-image">
+                                            <ngx-slick-carousel class="carousel" 
+                                                        #slickModal 
+                                                        [config]="slideConfig" 
+                                                        (init)="slickInit($event)"
+                                                        (breakpoint)="breakpoint($event)"
+                                                        (afterChange)="afterChange($event)"
+                                                        (beforeChange)="beforeChange($event)">
+                                                <div ngxSlickItem *ngFor="let photo of updatedPhotos" class="slide">
+                                                    <img [src]="photo" alt="" width="100%">
+                                                </div>
+                                            </ngx-slick-carousel>
+
+                                            <div class="slide-arrow-container-left" (click)="onSlideLeftClicked()" fxLayout="row" fxLayoutAlign="start center">
+                                                <img class="slide-arrow" src="assets/images/arrow_left.png"/>
+                                            </div>
+                                            <div class="slide-arrow-container-right" (click)="onSlideRightClicked()" fxLayout="row" fxLayoutAlign="end center">
+                                                <img class="slide-arrow" src="assets/images/arrow_right.png"/>
+                                            </div>  
+                                        </div>
+
+                    
+                                        <div class="thumb-images">
+                                            <ngx-slick-carousel class="carousel" 
+                                                        #slickModal_thumb
+                                                        [config]="slideConfig_thumb">
+                                                <div ngxSlickItem *ngFor="let thumb of updatedPhotos; let i=index" class="slide thumb-item">
+                                                    <img [src]="thumb" alt="">
+                                                </div>
+                                            </ngx-slick-carousel>
+                                        </div>
+
+                                    </div>
+                                    
+                                </div>
+                    
+                                <div class="view-tags" fxLayout="row wrap" fxLayoutAlign="start center">
+                                    <div class="view-tag" fxLayout="row" fxLayoutAlign="center center" *ngFor="let tag of tags">
+                                        <span>{{tag}}</span>
+                                    </div>
+
+                                </div>
+                    
+                                <div class="view-description" fxLayout="row wrap">
+                                    {{pf.description.value}}
+                                </div>
+
+                                <div fxLayout="row" fxLayoutAlign="center center" style="height:200px">
+                                    <div fxLayout="column">
+                                        <div fxLayout="row" fxLayoutAlign="center center">
+                                            <button fuseWidgetToggle mat-raised-button color="primary" class="submit-button" >Go Back and Change</button>
+                                        </div>
+                
+                                        <div fxLayout="row" fxLayoutAlign="center center" class="mt-12">
+                                            <button *ngIf="!this.postId" mat-raised-button color="accent" class="submit-button" (click)="onSubmit()">Looks good, Publish</button>
+                                            <button *ngIf="!!this.postId" mat-raised-button color="accent" class="submit-button" (click)="onSubmit()">Looks good, Republish</button>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </fuse-widget>
+            </block-ui>
+        </div>
+    </div>
+
+</div>

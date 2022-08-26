@@ -1,0 +1,138 @@
+// Import Fuse core library
+@import "@fuse/scss/core";
+
+// Import app.theme.scss
+@import "app/app.theme";
+
+// .mat-tab-label {
+//     //flex: 1;
+//     background-color: grey !important;
+// }
+
+.mat-tab-group {
+    //margin: 10px;
+    border: 1px solid;
+    border-color: #cccccc;
+
+    .mat-tab-header {
+        border-color: white;
+    }
+
+    .mat-tab-label {
+        flex: 1;
+        background-color: grey !important;
+
+        @include media-breakpoint('xs') {
+            padding: 0;
+            height: 24px;
+        }
+
+
+    }
+
+    .mat-tab-label-active {
+        background-color: white !important;
+    }
+
+    .mat-ink-bar {
+        background-color: transparent !important;
+    }
+}
+
+.mat-autocomplete-panel {
+    mat-option.mat-active {
+        background-color: #CCC !important;
+    }
+}
+
+ .taglist {
+    .mat-icon-button {
+        display: none !important;
+    }
+}
+
+.full-screen  {
+    max-width: 80vw !important;
+    @include media-breakpoint('xs') {
+        max-width: 100vw !important;
+    }
+
+    .mat-dialog-container {
+        box-shadow: none !important;
+        background: white !important;
+        padding: 20px !important;
+        
+        @include media-breakpoint('xs') {
+            padding: 10px !important;
+            margin: 10px !important;
+        }
+
+        .mat-dialog-content {
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+
+        .full-carousel {
+            width: 600px;
+            height: 600px;
+
+            @include media-breakpoint('xs') {
+                width: 100%;
+                height: 100%;
+            }
+
+
+            .slide-arrow:hover {
+                opacity: 1;
+            }
+    
+            .slide-arrow:hover {
+                opacity: 1;
+            }
+    
+            .slide-arrow {
+                opacity: 0.7;
+                width:40px;
+                height: 40px;
+                padding: 8px;
+                background-color: #CCCCCC;
+                border-radius: 50%;
+            }  
+
+            .slide-arrow.left {
+                padding-left: 6px;
+            }
+
+            .slide-arrow.right {
+                padding-right: 6px;
+                float: right;
+            }
+
+            .arrows {
+                position: absolute;
+                width: 600px;
+
+                top: 50%;
+                margin-top: -20px;
+                left: 50%;
+                margin-left: -300px;
+                
+                padding-left: 10px;
+                padding-right: 10px;
+
+
+                @include media-breakpoint('xs') {
+                    width: 100%;
+                    left: 0px;
+                    top: 50%;
+                    margin-top: -20px;
+                    margin-left: 0px;
+                    padding-left: 30px;
+                    padding-right: 30px;
+                }
+                
+            }
+    
+        }
+    }
+}

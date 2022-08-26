@@ -1,0 +1,45 @@
+<div class="courses" fxLayout="row wrap" fxLayoutAlign="center" [@animateStagger]="{value:'50'}">
+    <div class="course" *ngFor="let post of posts" fxFlex="100" fxFlex.gt-xs="50"
+         fxFlex.gt-sm="33" fxFlex.gt-xs="50" fxFlex="50" [@animate]="{value:'*',params:{y:'100%'}}">
+         
+         <div class="course-content" fxLayout="column" fxFlex="1 1 auto"  (click)="onStlClicked(post)">
+
+            <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+                
+                <!--<img src="{{stl.avatarUrl}}" class="avatar" />-->
+
+                <div fxLayout="row" fxLayoutAlign="start center">
+                    <img class="myavatar" src="{{post.owner.avatar}}" />
+                    <div class="category">{{post.owner.firstName + ' ' + post.owner.lastName}}</div>
+                </div>
+        <!--
+                <div class="length" fxLayout="row" fxLayoutAlign="center center">
+                    <mat-icon class="length-icon">access_time</mat-icon>
+                    <div class="min">{{stl.likeCount}} min</div>
+                </div>
+        -->
+            </div>
+        
+            <div class="content" fxLayoutAlign="center center">
+                <img [lazyLoad]="post.photos[0]" [defaultImage]="'assets/images/default_asset.png'" class="image" />
+            </div>
+        
+            <div class="footer" fxLayout="row" fxLayoutAlign="space-between center">
+                <span class="title"> {{post.title}} </span>
+                <div fxLayout="row" fxLayoutAlign="center center"> 
+                    <mat-icon class="">thumb_up</mat-icon> 
+                    <span class="votes">{{post.likeCount}} </span>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="no-courses" *ngIf="!loading && posts.length === 0">
+        No posts found!
+    </div>
+    <div class="loading-courses" *ngIf="loading">
+        Loading...
+    </div>
+
+</div>

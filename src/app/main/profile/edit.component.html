@@ -1,0 +1,240 @@
+<div class="editprofile page-layout blank"  fusePerfectScrollbar>
+    
+    <div fxLayout="row" class="" fxLayoutAlign="center">
+    <block-ui>
+        <ng-template #avatarCropDialog>
+            <h2 matDialogTitle>Image Cropping...</h2>
+            <mat-dialog-content class="cropper-content"  class="cropper-content">
+
+                <image-cropper
+                        [imageChangedEvent]="avatarChangedEvent"
+                        [maintainAspectRatio]="true"
+                        [aspectRatio]="4 / 4"
+                        format="png"
+                        (imageCropped)="onAvatarCropped($event)"
+                        (imageLoaded)="onAvatarLoaded()"
+                        (cropperReady)="onAvatarCropperReady()"
+                        (loadImageFailed)="onAvatarLoadFailed()"
+                    >
+                </image-cropper>
+
+            </mat-dialog-content>
+            
+            <mat-dialog-actions fxLayout="row" fxLayoutAlign="center center">
+                <button mat-button matDialogClose="OK" color="primary">OK</button>
+            </mat-dialog-actions>
+            
+            <!--<button mat-button (click)="onImageCropClose">OK</button> -->
+        </ng-template>
+
+        <ng-template #bgCropDialog>
+            <h2 matDialogTitle>Image Cropping...</h2>
+            <mat-dialog-content class="cropper-content"  class="cropper-content">
+
+                <image-cropper
+                        [imageChangedEvent]="bgChangedEvent"
+                        [maintainAspectRatio]="true"
+                        [aspectRatio]="8 / 2.5"
+                        format="png"
+                        (imageCropped)="onBgCropped($event)"
+                        (imageLoaded)="onBgLoaded()"
+                        (cropperReady)="onBgCropperReady()"
+                        (loadImageFailed)="onBgLoadFailed()"
+                    >
+                </image-cropper>
+
+            </mat-dialog-content>
+            
+            <mat-dialog-actions fxLayout="row" fxLayoutAlign="center center">
+                <button mat-button matDialogClose="OK" color="primary">OK</button>
+            </mat-dialog-actions>
+            
+            <!--<button mat-button (click)="onImageCropClose">OK</button> -->
+        </ng-template>
+
+        <fuse-widget class="carded-layer"  fxLayout="column">
+
+            <div class="fuse-widget-front mat-elevation-z2" fxLayout="column" fxLayoutAlign="space-between">
+
+                <div fxLayout="row" class="hero-text">
+                    <h1>Edit your profile</h1>
+                </div>
+
+                
+
+                <form name="profileForm" [formGroup]="profileForm" class="profileForm w-100-p" fxLayout="column"  fxFlex="1 0 auto">
+                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                        <mat-label>Profile Name (this will be your URL too)</mat-label>
+                        <input matInput placeholder=""
+                            name="profilename"
+                            formControlName="profilename">
+                        
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                        <mat-label>First Name</mat-label>
+                        <input matInput placeholder=""
+                            name="firstname"
+                            formControlName="firstname">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                        <mat-label>Last Name</mat-label>
+                        <input matInput placeholder=""
+                            name="lastname"
+                            formControlName="lastname">
+                    </mat-form-field>
+
+                    <!--
+                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                        <mat-label>Country</mat-label>
+                        <input matInput placeholder=""
+                            name="country"
+                            formControlName="country">
+                    </mat-form-field>
+                    -->
+
+                    <mat-form-field appearance="outline" fxFlex="90">
+                        <mat-label>Country</mat-label>
+                        <mat-select formControlName="country" name="country" required>
+                            <mat-option *ngFor="let country of countries" [value]="country.value">
+                                {{country.text}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-icon matSuffix class="secondary-text">outlined_flag</mat-icon>
+                        <!-- <mat-error>Country is required!</mat-error> -->
+                    </mat-form-field>
+
+                    <input type="file" hidden id="avatar" name="avatar" accept="image/jpeg, .jpeg, image/png, .png, image/pjpeg, .jpg" (change)="onFileInput(0, $event.target.files[0], $event)">
+                    <input type="file" hidden id="bgimage" name="bgimage" accept="image/jpeg, .jpeg, image/png, .png, image/pjpeg, .jpg" (change)="onFileInput(1, $event.target.files[0], $event)">
+
+                    <div fxLayout="row wrap"  fxLayoutAlign="start center">
+                        <div fxLayout="row" class="avatar-row" >
+                            <img class="avatar " #imgAvatar [src]="avatarCroppedImage">
+                            
+                            <button mat-raised-button  color="accent" class=" profile-info-item" fxLayout="row" fxLayoutAlign="center center" (click)="onAddImage('avatar')">
+                                <span>Add Photo</span>
+                                
+                            </button>
+                        </div>
+                        <div fxLayout="row"  class="bgimage-row">
+                            <span class="bgimage" #bgImageEmpty> BACKGOUND<br/>PHOTO</span>
+                            <img class="bgimage "  #imgBackground  [src]="bgCroppedImage">
+                            
+                            
+                            <button mat-raised-button  color="accent" class=" profile-info-item m-16 submit-button" fxLayout="row" fxLayoutAlign="center center"  (click)="onAddImage('bgimage')">
+                                <span>Add Photo</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <mat-form-field appearance="outline" floatLabel="always" class="w-100-p" style="margin-top: 30px;">
+                        <mat-label>Short bit about you!</mat-label>
+                        <textarea matInput placeholder="A few words to describe yourself and your 3D printing prowess"
+                                name="description"
+                                formControlName="description"
+                                rows="5">
+                        </textarea>
+                    </mat-form-field>
+                </form>
+
+                <div fxLayout="row" fxLayoutAlign="center center">
+                    <button fuseWidgetToggle mat-raised-button color="accent" class="submit-button" [disabled]="!isFormCompleted()" (click)="onPreview($event)" >Save and Preview</button>
+                </div>
+
+                
+
+            </div>
+
+            <div class="fuse-widget-back mat-elevation-z2">
+                <!-- HEADER -->
+                <div class="profile-header " #profileBg fxLayout="row" fxLayoutAlign="center">
+                    
+                    <img class="profile-bg" [src]="bgCroppedImage" />
+
+                    <div class="carded-layer" fxLayout="row" fxLayoutAlign="space-between">
+
+                        <!-- APP TITLE -->
+                        <div fxLayout="row" fxLayoutAlign="center center" class="profile-info-item m-8">
+                            <mat-icon class="secondary-text s-20">thumb_up</mat-icon>
+                            <span>2,485</span>
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center center" class="profile-info-item m-8">
+                            <mat-icon class="secondary-text s-20">save_alt</mat-icon>
+                            <span>485</span>
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center center" class="profile-info-item m-8">
+                            <mat-icon class="secondary-text s-20">person_add</mat-icon>
+                            <span>485</span>
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center center" class="profile-info-item m-8">
+                            <mat-icon class="secondary-text s-20">star</mat-icon>
+                            <span>1,285</span>
+                        </div>
+
+                        <!-- / APP TITLE -->
+                    </div>
+
+                    
+                </div>
+                <!-- / HEADER -->
+
+                <div class="profile-layer" fxLayout="row" fxLayoutAlign="center">
+
+                    <div class="carded-layer px-12"  fxLayout="column">
+                        <div fxLayout="row" fxLayoutAlign="start center">
+                            <!--<div class="avatar " #profileAvatar style="background-image: url('assets/images/avatars/profile.jpg')"></div>-->
+                            <img class="avatar" [src]="avatarCroppedImage" />
+                            <span class="profile-username" #username>Charlie Adams</span>
+                        </div>
+        
+                        <div class="profile-layout" fxLayout="column" fxLayoutAlign="space-between">
+        
+                            <div fxLayout="row" >
+                                <span class="profile-shortbit m-8" #description> Here is the short description I wrote 
+                                    about myself</span>
+                            </div>
+        
+                            <div fxLayout="row" >
+        
+                                <button mat-button disabled style="color:rgba(0, 0, 0, 0.87)" class="circle-button profile-info-item " fxLayout="row" fxLayoutAlign="center center">
+                                    <mat-icon class="secondary-text s-20">star_border</mat-icon>
+                                    <span>Give Kudos</span>
+                                </button>
+        
+                                <button mat-button disabled style="color:rgba(0, 0, 0, 0.87)" class="circle-button profile-info-item " fxLayout="row" fxLayoutAlign="center center">
+                                    <mat-icon class="secondary-text s-20">person_add</mat-icon>
+                                    <span>Follow</span>
+                                </button>
+        
+                                <button mat-button disabled style="color:rgba(0, 0, 0, 0.87)" class="circle-button profile-info-item " fxLayout="row" fxLayoutAlign="center center">
+                                    <mat-icon class="secondary-text s-20">share</mat-icon>
+                                    <span>Share</span>
+                                </button>
+        
+                            </div>
+        
+                        </div>
+        
+                    </div>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="center center" style="height:200px">
+                    <div fxLayout="column">
+                        <div fxLayout="row" fxLayoutAlign="center center">
+                            <button fuseWidgetToggle mat-raised-button color="primary" class="submit-button" >Go Back and Change</button>
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center center" class="mt-12">
+                            <button mat-raised-button color="accent" class="submit-button" (click)="onSubmit()">Looks, good Publish</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </fuse-widget>
+    </block-ui>
+    </div>
+
+</div>

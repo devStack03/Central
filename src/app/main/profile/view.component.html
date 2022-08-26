@@ -1,0 +1,155 @@
+<div id="profile-view" class="page-layout blank"
+infiniteScroll
+          [infiniteScrollDistance]="1"
+          [infiniteScrollThrottle]="50"
+          [infiniteScrollContainer]="'#container-3'"
+          [fromRoot]="true"
+          (scrolled)="onScroll()"
+          >
+
+    <ng-template #socialShareDialog class="dialog-content-wrapper">
+        <h2 style="margin-top: 0px;"><mat-icon class="secondary-text s-20 mr-8">share</mat-icon> Sharing...</h2>
+
+        <mat-dialog-content class="cropper-content"  class="cropper-content">
+            <div class="share-items">
+                <button mat-button [socialShare]="'fb'" class="share-item" fxLayout="row" fxLayoutAlign="start center" (click)="dialogRef.close()">
+                    <img class="social-img" src="assets/images/socials/facebook.svg" />
+                    <span>Facebook </span>
+                </button>
+
+                <button mat-button [socialShare]="'tw'" class="share-item" fxLayout="row" fxLayoutAlign="start center" (click)="dialogRef.close()">
+                    <img class="social-img" src="assets/images/socials/twitter.svg" />
+                    <span>Twitter </span>
+                </button>
+
+                <button mat-button [socialShare]="'in'" class="share-item" fxLayout="row" fxLayoutAlign="start center" (click)="dialogRef.close()">
+                    <img class="social-img" src="assets/images/socials/linkedin.svg" />
+                    <span>Linkdedin </span>
+                </button>
+    <!--
+                <div [socialShare]="'tr'">Tumblr</div>
+                <div [socialShare]="'rd'">Reddit</div>
+                <div [socialShare]="'pn'">Pinterest</div>
+    -->
+            </div>
+        </mat-dialog-content>
+        <!--
+        <mat-dialog-actions fxLayout="row" fxLayoutAlign="center center" style="margin-top: -10px;">
+            <button mat-button (click)="onGiveTipClick()" color="accent" [disabled]="giveTipAmountInput.value <= 0">Give</button>
+            <button mat-button (click)="giveTipDialogRef.close()" color="primary">Cancel</button>
+        </mat-dialog-actions>
+        -->
+        <!--<button mat-button (click)="onImageCropClose">OK</button> -->
+    </ng-template>
+
+    <div class="content" >
+
+        <!-- HEADER -->
+        <div class="profile-header "  #profileHeader fxLayout="row" fxLayoutAlign="center" >
+
+            <img class="profile-bg" [src]="user && user.bgImage ? (user.bgImage) : 'assets/images/backgrounds/default-bg.jpg'" />
+
+            <div class="carded-layer" fxLayout="row" fxLayoutAlign="space-between">
+
+                <!-- APP TITLE -->
+                <div fxLayout="row" fxLayoutAlign="center center" class="profile-info-item">
+                    <mat-icon class="secondary-text">thumb_up</mat-icon>
+                    <span>{{user ? user.like_count: 0}}</span>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="center center" class="profile-info-item">
+                    <mat-icon class="secondary-text">save_alt</mat-icon>
+                    <span>{{user ? user.download_count: 0}}</span>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="center center" class="profile-info-item">
+                    <mat-icon class="secondary-text">person_add</mat-icon>
+                    <span>{{user ? user.follow_count: 0}}</span>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="center center" class="profile-info-item">
+                    <mat-icon class="secondary-text">star</mat-icon>
+                    <span>{{user ? user.kudo_count: 0}}</span>
+                </div>
+                <!-- / APP TITLE -->
+            </div>
+
+            
+        </div>
+        <!-- / HEADER -->
+
+        <div class="profile-layer" fxLayout="row" fxLayoutAlign="center" style="z-index: 10;">
+
+            <div class="carded-layer ml-12 mr-12"  fxLayout="column" fxLayoutAlign="space-between">
+                <div fxLayout="row" class="ml-12" fxLayoutAlign="start center">
+                    <img class="avatar " [src]="(user && user.avatar) ? user.avatar : 'assets/images/avatars/profile.jpg'">
+                    <!-- <div class="avatar " #avatar style="background-image: url('assets/images/avatars/profile.jpg')"> </div> -->
+                    <span class="profile-username " >{{user ? (user.firstName + " " + user.lastName) : ''}}</span>
+                    <!-- EDIT BUTTON -->
+                    <div *ngIf="loggedIn == true && loggedInUser && user && loggedInUser.id == user.id" class="upload-wrapper" fxLayout="row" fxLayoutAlign="center center" class="m-8 m-sm-8">
+                        <!--<span class="p-16">or</span> -->
+                        <a mat-button [routerLink]="'/profile_edit'" class="my-theme-color" fxFlex="0 0 auto" fxLayout="row"
+                        fxLayoutAlign="start center">
+                            <mat-icon class="s-16 mr-sm-4">edit</mat-icon>
+                            <span fxHide fxShow.gt-sm>Edit Profile</span>
+                            <span fxShow fxHide.gt-sm>Edit</span>
+                        </a>
+                    </div>
+                    <!-- / EDIT BUTTON -->
+                </div>
+
+                <div class="profile-layout" fxLayout="column" fxLayoutAlign="space-between">
+
+                    <div fxLayout="row" >
+                        <span class="profile-shortbit m-8" > {{user ? user.bio : ''}}</span>
+                    </div>
+
+                    <div fxLayout="row" *ngIf="!(loggedIn && loggedInUser && user && loggedInUser.id == user.id)">
+
+                        <button *ngIf = "!isKudoed" mat-button class="circle-button profile-info-item" fxLayout="row" fxLayoutAlign="center center" (click)="onGiveKudosClicked()">
+                            <mat-icon class="secondary-text s-16">star_border</mat-icon>
+                            <span>Give Kudos</span>
+                        </button>
+
+                        <div *ngIf = "isKudoed" class="circle-button profile-info-item button-disabled" fxLayout="row" fxLayoutAlign="center center">
+                            <mat-icon class="secondary-text s-16">star_border</mat-icon>
+                            <span>Sent Kudos</span>
+                        </div>
+
+                        <button *ngIf = "!isFollowed" mat-button class="circle-button profile-info-item" fxLayout="row" fxLayoutAlign="center center" (click)="onFollowClicked()">
+                            <mat-icon class="secondary-text s-16">person_add</mat-icon>
+                            <span>Follow</span>
+                        </button>
+
+                        <button *ngIf = "isFollowed" mat-button class="circle-button profile-info-item" fxLayout="row" fxLayoutAlign="center center" (click)="onUnfollowClicked()">
+                            <mat-icon class="secondary-text s-16">person_add_disabled</mat-icon>
+                            <span>Unfollow</span>
+                        </button>
+
+                        <button mat-button class="circle-button profile-info-item" fxLayout="row" fxLayoutAlign="center center" (click)="onShareClicked()">
+                            <mat-icon class="secondary-text s-16">share</mat-icon>
+                            <span>Share</span>
+                        </button>
+
+                    </div>
+
+                    <div fxLayout="row " >
+                        <span class="profile-shortbit m-8" > STLs contributed</span>
+                    </div>
+
+                    <!--<div class="app-stllist" fxLayout="row" fxLayoutAlign="center" >-->
+                        <app-stllist [posts]="posts" [loading]="loading" [ngClass]="'app-stllist'"></app-stllist>
+                    <!--</div>-->
+
+
+                </div>
+
+
+
+            </div>
+        </div>
+        <!-- / CONTENT CARD -->
+
+    </div>
+    <!-- / CENTER -->
+</div>

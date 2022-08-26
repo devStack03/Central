@@ -1,0 +1,21 @@
+@import "src/@fuse/scss/fuse";
+.setting {
+    max-width: 800px;
+    padding: 20px;
+
+    @include media-breakpoint(xs) {
+        padding: 16px;
+        width: 300px;
+
+    }
+}
+
+.mat-card {
+    
+    padding: 24px;
+
+    @include media-breakpoint(xs) {
+        padding: 16px;
+    }
+
+}

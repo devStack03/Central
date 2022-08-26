@@ -1,0 +1,93 @@
+<div id="transactions" class="page-layout blank" fusePerfectScrollbar>
+
+    <!-- HEADER -->
+    <div class="header" fxLayout="column" fxLayoutAlign="center center">
+        <!-- Hero Text -->
+        <div class="hero-text">
+            <h2 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+                Coin Activity
+            </h2>
+        </div>
+        <!-- / Hero Text -->
+
+        <div class="hero-text">
+            <h3 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+                Your coin balance is <b>{{user && user.balance ? user.balance : 0 }}</b>
+            </h3>
+        </div>
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content">
+
+        <div class="filters" fxLayout="row" fxLayoutAlign="end start">
+
+                <div class="guide" fxLayout="row" fxLayoutAlign="center" >
+                    <span class="show">Show</span>
+                    <u class="all" (click)="onShowAllClicked()">All</u>
+                    <span class="show">or</span>
+                </div>
+                <mat-form-field appearance="outline" class="filter-selector">
+                    <mat-label>STL Name, User Name</mat-label>
+                    <input matInput placeholder=""
+                            name="filter" [formControl]="searchInput" [(ngModel)]="searchTerm">
+                </mat-form-field>
+
+                <!--
+                <button mat-button class="go" (click)="onGoClicked()"> 
+                    <span>Go</span>
+                </button>
+                -->
+        </div>
+
+        <div class="filters" fxLayout="row" fxLayoutAlign="space-between center"
+                fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="space-between center">
+
+                <mat-form-field appearance="outline" class="sortby-selector">
+                    <mat-label>Sort by</mat-label>
+                    <mat-select [(ngModel)]="currentSort"
+                                (selectionChange)="changedSortby()">
+                        <mat-option *ngFor="let sortby of sortbys" [value]="sortby.value">
+                            {{ sortby.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                
+        </div>
+
+        <!--<div class="kudos" fxLayout="column" fxLayoutAlign="center" [@animateStagger]="{value:'50'}">
+            <button mat-button  class="kudo" *ngFor="let transaction of transactions" [@animate]="{value:'*',params:{y:'100%'}}" (click) = "onTransactionClicked(transaction)"> 
+            -->
+            <div class="kudos" fxLayout="column" fxLayoutAlign="center">
+                <button mat-button  class="kudo" *ngFor="let transaction of transactions" (click) = "onTransactionClicked(transaction)"> 
+
+                <div fxLayout="row" fxLayoutAlign="start center">
+
+                    <div class="avatar-wrapper" fxFlex="0 1 auto" fxLayoutAlign="center center" (click) = "onAvatarClicked(transaction)">
+                        <img src="{{user && user.id == transaction.sender._id ? transaction.receiver.avatar : transaction.sender.avatar}}" class="avatar" />
+                    </div>
+
+                    <div fxLayout="row" fxFlex>
+
+                        <div class="pr-4" fxFlex fxLayout="column" fxLayoutAlign="center start">                         
+                            <div class="where">{{findWhere(transaction)}}</div>
+                        </div>
+
+                        <div fxLayout="column" fxLayoutAlign="start end">
+                            <div class="time">
+                                {{formatFromNow(transaction.createdAt)}}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </button>
+
+            <div class="no-courses" *ngIf="transactions.length === 0">
+                No Transactions Found!
+            </div>
+        
+        </div>
+    </div>
+
+</div>
